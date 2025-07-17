@@ -15,13 +15,21 @@ import ShoppingCheckout from "./pages/shopping/checkout"
 import ShoppingAccount from "./pages/shopping/account"
 import CheckAuth from "./components/common/check-auth"
 import UnauthPage from "./pages/unauth-page"
+import { useDispatch, useSelector } from "react-redux"
+import { useEffect } from "react"
+import { checkAuth } from "./store/authSlice"
 
 
 function App() {
 
-  const isAuthenticated = false;
-  const user = null;
-  
+  const {isAuthenticated, user} = useSelector(state => state.auth)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(checkAuth())
+  },[dispatch])
+
+  console.log(user)
   return (
     <div className="flex flex-col overflow-hidden bg-white">
       <Routes>
