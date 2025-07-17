@@ -1,11 +1,4 @@
-export const registerFormControls = [
-  {
-    name: "userName",
-    label: "Username",
-    placeholder: "Enter Your User Name",
-    componentType: "input",
-    type: "text",
-  },
+export const loginFormControls = [
   {
     name: "email",
     label: "Email",
