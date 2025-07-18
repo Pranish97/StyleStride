@@ -18,17 +18,22 @@ import UnauthPage from "./pages/unauth-page"
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect } from "react"
 import { checkAuth } from "./store/authSlice"
+import { Skeleton } from "@/components/ui/skeleton"
 
 
 function App() {
 
-  const {isAuthenticated, user} = useSelector(state => state.auth)
+  const {isAuthenticated, user, isLoading} = useSelector(state => state.auth)
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(checkAuth())
   },[dispatch])
 
+
+  if(isLoading){
+    return<Skeleton className="h-[600px] bg-black w-[800px] " />
+  }
   console.log(user)
   return (
     <div className="flex flex-col overflow-hidden bg-white">
