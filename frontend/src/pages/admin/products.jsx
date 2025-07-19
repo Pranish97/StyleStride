@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import {
@@ -10,6 +10,9 @@ import {
 import CommonForm from "../../components/common/form";
 import { addProductFormElements } from "../../config";
 import ProductImageUpload from "../../components/admin/image-upload";
+import { useDispatch, useSelector } from "react-redux";
+import { addNewProduct, fetchAllProduct } from "../../store/admin/products-slice";
+import {toast} from "react-toastify"
 
 const initialFormData = {
   image: null,
@@ -27,8 +30,34 @@ function AdminProducts() {
   const [formData, setFormData] = useState(initialFormData);
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState();
+  const [imageLoadingState, setImageLoadingState] = useState(false)
+  const {productList} = useSelector(state => state.adminProducts)
+  const dispatch = useDispatch()
 
-  function onSubmit(e) {}
+  function onSubmit(e) {
+    e.preventDefault()
+
+    dispatch(addNewProduct({
+      ...formData,
+      image: uploadedImageUrl
+    })).then((data) => {
+      if(data?.payload?.success){
+        dispatch(fetchAllProduct())
+        setImageFile(null)
+        setOpenCreateProductSheet(false)
+        setFormData(initialFormData)
+        toast.success(data?.payload?.message)
+      }
+    })
+  }
+
+
+
+  useEffect(() => {
+    dispatch(fetchAllProduct())
+  },[dispatch])
+
+  console.log(productList)
   return (
     <Fragment>
       <div className="mb-5 w-full flex justify-end">
@@ -55,6 +84,8 @@ function AdminProducts() {
             setImageFile={setImageFile}
             uploadedImageUrl={uploadedImageUrl}
             setUploadedImageUrl={setUploadedImageUrl}
+            setImageLoadingState={setImageLoadingState}
+            imageLoadingState = {imageLoadingState}
           />
 
           <div className="py-6">

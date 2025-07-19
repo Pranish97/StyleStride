@@ -94,7 +94,7 @@ export const addProductFormElements = [
     type: "number",
   },
   {
-    name: "stock",
+    name: "totalStock",
     label: "Total Stock",
     placeholder: "Enter Stock Quantity",
     componentType: "input",
