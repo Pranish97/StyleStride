@@ -14,6 +14,7 @@ function ProductImageUpload({
   setUploadedImageUrl,
   setImageLoadingState,
   imageLoadingState,
+  currentEditedId
 }) {
   const inputRef = useRef(null);
 
@@ -63,10 +64,11 @@ function ProductImageUpload({
       <Label className="text-lg font-semibold mb-2 block mt-4">
         Upload Image
       </Label>
+      
       <div
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        className="border-2 border-dashed rounded-lg p-4"
+        className={`${currentEditedId ? "opacity-30" : ""} border-2 border-dashed rounded-lg p-4`}
       >
         <Input
           onChange={handleImageFileChange}
@@ -74,6 +76,7 @@ function ProductImageUpload({
           type="file"
           className="hidden"
           ref={inputRef}
+          disabled={currentEditedId}
         />
         {!imageFile ? (
           <Label

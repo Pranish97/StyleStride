@@ -83,7 +83,7 @@ const fetchAllProduct = async (req, res) => {
 
 const editProduct = async (req, res) => {
   try {
-    const { productId } = req.params;
+    const { id: productId } = req.params;
 
     const {
       image,
@@ -112,7 +112,7 @@ const editProduct = async (req, res) => {
     findProduct.brand = brand || findProduct.brand;
     findProduct.price = price || findProduct.price;
     findProduct.salePrice = salePrice || findProduct.salePrice;
-    findProduct.totalStock = title || findProduct.totalStock;
+    findProduct.totalStock = totalStock || findProduct.totalStock;
     findProduct.image = image || findProduct.title;
 
     await findProduct.save();
@@ -134,7 +134,7 @@ const editProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   try {
-    const { productId } = req.params;
+    const productId = req.params;
 
     const product = await productModel.findByIdAndDelete(productId);
 
