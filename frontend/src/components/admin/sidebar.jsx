@@ -64,7 +64,7 @@ function AdminSideBar({ open, setOpen }) {
               </SheetTitle>
             </SheetHeader>
 
-            <MenuItems setOpen={setOpen} />
+        
           </div>
         </SheetContent>
       </Sheet>
@@ -77,7 +77,7 @@ function AdminSideBar({ open, setOpen }) {
           <h1 className="text-2xl font-extrabold">Admin Panel</h1>
         </div>
 
-        <MenuItems />
+        <MenuItems setOpen={setOpen} />
       </aside>
     </Fragment>
   );
