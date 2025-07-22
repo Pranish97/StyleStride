@@ -13,6 +13,7 @@ import ProductImageUpload from "../../components/admin/image-upload";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addNewProduct,
+  deleteProduct,
   editProduct,
   fetchAllProduct,
 } from "../../store/admin/products-slice";
@@ -41,38 +42,52 @@ function AdminProducts() {
   const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
 
-
   function onSubmit(e) {
     e.preventDefault();
 
-    currentEditedId !== null ? 
-    dispatch(
-      editProduct({
-        id: currentEditedId,
-        formData
-      })
-    ).then((data) => {
-       if(data?.payload?.success){
-        dispatch(fetchAllProduct());
-        setOpenCreateProductSheet(false);
-        setFormData(initialFormData);
-        toast.success(data?.payload?.message);
-       }
-    }) :
-    dispatch(
-      addNewProduct({
-        ...formData,
-        image: uploadedImageUrl,
-      })
-    ).then((data) => {
-      if (data?.payload?.success) {
-        dispatch(fetchAllProduct());
-        setImageFile(null);
-        setOpenCreateProductSheet(false);
-        setFormData(initialFormData);
-        toast.success(data?.payload?.message);
+    currentEditedId !== null
+      ? dispatch(
+          editProduct({
+            id: currentEditedId,
+            formData,
+          })
+        ).then((data) => {
+          if (data?.payload?.success) {
+            dispatch(fetchAllProduct());
+            setOpenCreateProductSheet(false);
+            setFormData(initialFormData);
+            toast.success(data?.payload?.message);
+          }
+        })
+      : dispatch(
+          addNewProduct({
+            ...formData,
+            image: uploadedImageUrl,
+          })
+        ).then((data) => {
+          if (data?.payload?.success) {
+            dispatch(fetchAllProduct());
+            setImageFile(null);
+            setOpenCreateProductSheet(false);
+            setFormData(initialFormData);
+            toast.success(data?.payload?.message);
+          }
+        });
+  }
+
+  function handleDelete(getCurrentProductId) {
+    dispatch(deleteProduct(getCurrentProductId)).then(data => {
+      if(data?.payload?.success){
+        toast.success(data?.payload?.message)
+        dispatch(fetchAllProduct())
       }
-    });
+    })
+  }
+
+  function isFormValid() {
+    return Object.keys(formData)
+      .map((key) => formData[key] !== "")
+      .every((item) => item);
   }
 
   useEffect(() => {
@@ -99,7 +114,7 @@ function AdminProducts() {
             setCurrentedEditedId={setCurrentedEditedId}
             key={index}
             product={product}
-            
+            handleDelete={handleDelete}
           />
         ))}
       </div>
@@ -107,14 +122,16 @@ function AdminProducts() {
       <Sheet
         open={openCreateProductSheet}
         onOpenChange={() => {
-          setOpenCreateProductSheet(false)
-          setCurrentedEditedId(null)
-          setFormData(initialFormData)
+          setOpenCreateProductSheet(false);
+          setCurrentedEditedId(null);
+          setFormData(initialFormData);
         }}
       >
         <SheetContent side="right" className="overflow-auto px-6">
           <SheetHeader>
-            <SheetTitle>{currentEditedId !== null  ? "Edit Product" : "Add New Product"}</SheetTitle>
+            <SheetTitle>
+              {currentEditedId !== null ? "Edit Product" : "Add New Product"}
+            </SheetTitle>
           </SheetHeader>
 
           <ProductImageUpload
@@ -134,6 +151,7 @@ function AdminProducts() {
               buttonText={currentEditedId !== null ? "Update" : "Add"}
               onSubmit={onSubmit}
               formControls={addProductFormElements}
+              isButtonDisable={!isFormValid()}
             />
           </div>
         </SheetContent>

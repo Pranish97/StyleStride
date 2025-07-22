@@ -2,7 +2,7 @@ import { Button } from "../ui/button"
 import {Card, CardContent, CardFooter} from "../ui/card"
 
 
-function AdminProductTile({product, setFormData, setOpenCreateProductSheet,setCurrentedEditedId }) {
+function AdminProductTile({product, setFormData, setOpenCreateProductSheet,setCurrentedEditedId ,handleDelete}) {
     return(
         <Card className="w-full max-w-sm ax-auto">
             <div className="relative">
@@ -26,7 +26,9 @@ function AdminProductTile({product, setFormData, setOpenCreateProductSheet,setCu
                     setCurrentedEditedId(product?._id)
                     setFormData(product)
                 }}>Edit</Button>
-                <Button>Delete</Button>
+                <Button onClick={() => {
+                    handleDelete(product._id)
+                }}>Delete</Button>
             </CardFooter>
         </Card>
     )
