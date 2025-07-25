@@ -19,7 +19,7 @@ import {
 } from "../../store/admin/products-slice";
 import { toast } from "react-toastify";
 import AdminProductTile from "../../components/admin/product-tile";
-import { data } from "react-router-dom";
+
 
 const initialFormData = {
   image: null,
