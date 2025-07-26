@@ -57,4 +57,32 @@ const getFilterProduct = async (req, res) => {
   }
 };
 
-module.exports = getFilterProduct;
+const getProductDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const productDetails = await productModel.findById(id);
+
+    if (!productDetails)
+      return res.ststus(404).json({
+        message: "Product Not Found",
+        success: false,
+        error: true,
+      });
+
+    res.status(200).json({
+      message: "Product Details",
+      data: productDetails,
+      success: true,
+      error: false,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+module.exports = { getFilterProduct, getProductDetails };
