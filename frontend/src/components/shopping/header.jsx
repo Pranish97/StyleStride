@@ -10,12 +10,14 @@ import { shoppingHeaderMenuItems } from "../../config";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { logoutUser } from "../../store/authSlice";
 import { toast } from "react-toastify";
+import UserCartWrapper from "./cartWrapper";
+import { useEffect, useState } from "react";
+import { fetchCartItems } from "../../store/shop/cart-slice";
 
 function MenuItems() {
   return (
@@ -35,23 +37,37 @@ function MenuItems() {
 
 function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
+  const [openCartSheet, setOpenCartSheet] = useState(false);
   const dispatch = useDispatch();
+  const { cartItems } = useSelector((state) => state.shopCart);
 
   function handleLogout() {
     dispatch(logoutUser()).then((data) => {
-      if(data?.payload?.success){
-        toast.success(data?.payload?.message)
+      if (data?.payload?.success) {
+        toast.success(data?.payload?.message);
       }
     });
   }
 
+  useEffect(() => {
+    dispatch(fetchCartItems(user?.id))
+  },[dispatch])
+
+
   return (
     <div className="flex lg:ml-0 lg:mt-0 lg:items-center lg:flex-row flex-col gap-4 ml-8 mt-4">
-      <Button variant="outline" size="icon">
-        <ShoppingCart className="h-6 w-6" />
-        <span className="sr-only">User Cart</span>
-      </Button>
+      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setOpenCartSheet(true)}
+        >
+          <ShoppingCart className="h-6 w-6" />
+          <span className="sr-only">User Cart</span>
+        </Button>
+
+        <UserCartWrapper cartItems={cartItems && cartItems.items && cartItems.items.length > 0  ? cartItems.items : ""} />
+      </Sheet>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -104,17 +120,17 @@ function ShoppingHeader() {
           </SheetTrigger>
           <SheetContent side="right" className="w-full max-w-xs">
             <MenuItems />
-            <HeaderRightContent/>
+            <HeaderRightContent />
           </SheetContent>
         </Sheet>
 
         <div className="hidden lg:block">
           <MenuItems />
         </div>
-        
-          <div className="hidden lg:block">
-            <HeaderRightContent />
-          </div>
+
+        <div className="hidden lg:block">
+          <HeaderRightContent />
+        </div>
       </div>
     </header>
   );
