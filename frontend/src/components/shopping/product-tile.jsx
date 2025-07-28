@@ -1,8 +1,8 @@
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
 
 function ShoppingProductTile({ product, handleProductDetails }) {
+  
   return (
     <Card className="w-full max-w-sm mx-auto hover:scale-105 cursor-pointer">
       <div onClick={()=> handleProductDetails(product._id)}>
