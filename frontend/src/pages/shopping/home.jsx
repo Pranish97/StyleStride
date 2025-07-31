@@ -26,6 +26,7 @@ import puma from "../../assets/puma.png";
 import  levis  from "../../assets/levis.png";
 import  zara  from "../../assets/zara.png";
 import hm  from "../../assets/hm.jpg";
+import {useNavigate} from "react-router-dom"
 
 const categories = [
   { id: "men", label: "Men", icon: ShirtIcon },
@@ -52,6 +53,7 @@ function ShoppingHome() {
     (state) => state.shopProducts
   );
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -64,6 +66,19 @@ function ShoppingHome() {
   function handleProductDetails(getCurrentProductId) {
     dispatch(fetchProductDetails(getCurrentProductId));
   }
+
+
+  function handleNavigateToListing(getCurrentItem, section){
+    sessionStorage.removeItem('filters');
+    const currentFilter = {
+      [section] : [getCurrentItem.id]
+    }
+
+    sessionStorage.setItem('filters', JSON.stringify(currentFilter))
+    navigate(`/shop/listing`)
+  }
+
+  
 
   useEffect(() => {
     dispatch(
@@ -120,7 +135,7 @@ function ShoppingHome() {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {categories.map((item) => (
-              <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <Card onClick={() => handleNavigateToListing(item, 'category')} className="cursor-pointer hover:shadow-lg transition-shadow">
                 <CardContent className="flex flex-col items-center justify-center p-6">
                   <item.icon className="w-12 h-12 mb-4 text-primary" />
                   <span className="font-bold">{item?.label}</span>
@@ -139,7 +154,7 @@ function ShoppingHome() {
           <div className="grid grid-cols-2  md:grid-cols-3 lg:grid-cols-6 gap-6">
             {
               brand.map((brand) => 
-              <Card className="cursor-pointer hover:shadow-lg transition-shadow">
+              <Card onClick={() => handleNavigateToListing(brand, 'brand')} className="cursor-pointer hover:shadow-lg transition-shadow">
                 <CardContent className="flex flex-col items-center justify-center p-6">
                   <img src={brand?.image} className="w-16 h-12 mb-4 text-primary" />
                   <span className="font-bold">{brand?.label}</span>
