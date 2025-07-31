@@ -1,7 +1,8 @@
 import logo from "../../assets/logo.png";
 import { Link, useNavigate } from "react-router-dom";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import {  Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
+import { Label } from "../ui/label";
 import { DropdownMenu } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { LogOut, Menu, ShoppingCart, UserRound } from "lucide-react";
@@ -19,17 +20,34 @@ import UserCartWrapper from "./cartWrapper";
 import { useEffect, useState } from "react";
 import { fetchCartItems } from "../../store/shop/cart-slice";
 
+
+
 function MenuItems() {
+  const navigate = useNavigate()
+
+
+  function handleNavigate(getCurrentMenuItem){
+    sessionStorage.removeItem('filters')
+
+    const currentFilter = getCurrentMenuItem.id !== 'home' ? {
+      category: [getCurrentMenuItem.id]
+    } : null
+
+    sessionStorage.setItem('filters', JSON.stringify(currentFilter))
+    navigate(getCurrentMenuItem.path)
+    
+  }
+
   return (
     <nav className="flex flex-col  lg:mt-0 lg:ml-0 lg:items-center gap-6 lg:flex-row ml-8 mt-9">
       {shoppingHeaderMenuItems.map((menuItems) => (
-        <Link
-          className="text-sm font-medium"
+        <Label
+          className="text-sm font-medium cursor-pointer"
           key={menuItems.id}
-          to={menuItems.path}
+          onClick={() => handleNavigate(menuItems)}
         >
           {menuItems?.label}
-        </Link>
+        </Label>
       ))}
     </nav>
   );
@@ -40,6 +58,8 @@ function HeaderRightContent() {
   const [openCartSheet, setOpenCartSheet] = useState(false);
   const dispatch = useDispatch();
   const { cartItems } = useSelector((state) => state.shopCart);
+  const navigate = useNavigate()
+
 
   function handleLogout() {
     dispatch(logoutUser()).then((data) => {
