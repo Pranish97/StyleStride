@@ -14,5 +14,5 @@ const addressSchema = new mongoose.Schema(
   }
 );
 
-const addressModel = mongoose.Model("Address", addressSchema);
+const addressModel = mongoose.model("Address", addressSchema);
 module.exports = addressModel;

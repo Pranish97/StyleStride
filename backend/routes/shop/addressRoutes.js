@@ -8,7 +8,7 @@ const {
 
 const router = express.Router();
 
-router.get("/address/:userId", fetchAllAddress);
+router.get("/:userId", fetchAllAddress);
 router.post("/add", addAddress);
 router.put("/edit/:userId/:addressId", editAddress);
 router.delete("/delete/:userId/:addressId", deleteAddress);
