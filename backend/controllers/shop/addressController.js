@@ -82,7 +82,7 @@ const editAddress = async (req, res) => {
 
     const address = await addressModel.findOneAndUpdate(
       {
-        _id: addressId._id,
+        _id: addressId,
         userId,
       },
       formData,
