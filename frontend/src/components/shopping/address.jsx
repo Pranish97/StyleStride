@@ -30,6 +30,13 @@ function Address() {
   function handleManageAddress(e) {
     e.preventDefault();
 
+    if(addressList.length >= 3 && currentEditedId === null) {
+      setFormData(initialData)
+      toast.error("You can only add 3 Address")
+
+      return
+    }
+
     currentEditedId !== null
       ? dispatch(
           editAddress({
