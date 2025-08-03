@@ -1,34 +1,33 @@
-import { Button } from "../ui/button"
-import { Card, CardContent, CardFooter } from "../ui/card"
-import { Label } from "../ui/label"
+import { Button } from "../ui/button";
+import { Card, CardContent, CardFooter } from "../ui/card";
+import { Label } from "../ui/label";
 
-function AddressCard({addressInfo ,handleDelete , handleEdit}) {
-    return(
-        <Card>
-            <CardContent className="grid p-4 gap-4">
-                <Label>
-                    Address: {addressInfo.address}
-                </Label>
-                 <Label>
-                    City: {addressInfo.city}
-                </Label>
-                 <Label>
-                    Pincode: {addressInfo.pincode}
-                </Label>
-                 <Label>
-                    Phone: {addressInfo.phone}
-                </Label>
-                 <Label>
-                    Notes: {addressInfo.notes}
-                </Label>
-            </CardContent>
+function AddressCard({
+  addressInfo,
+  handleDelete,
+  handleEdit,
+  setCurrentSelectedAddress,
+}) {
+  return (
+    <Card
+      onClick={
+         () => setCurrentSelectedAddress(addressInfo)
+      }
+    >
+      <CardContent className="grid p-4 gap-4">
+        <Label>Address: {addressInfo.address}</Label>
+        <Label>City: {addressInfo.city}</Label>
+        <Label>Pincode: {addressInfo.pincode}</Label>
+        <Label>Phone: {addressInfo.phone}</Label>
+        <Label>Notes: {addressInfo.notes}</Label>
+      </CardContent>
 
-            <CardFooter className="p-0 flex gap-3">
-                <Button onClick={() => handleEdit(addressInfo)}>Edit</Button>
-                <Button onClick={() => handleDelete(addressInfo)}>Delete</Button>
-            </CardFooter>
-        </Card>
-    )
+      <CardFooter className="p-0 flex gap-3">
+        <Button onClick={() => handleEdit(addressInfo)}>Edit</Button>
+        <Button onClick={() => handleDelete(addressInfo)}>Delete</Button>
+      </CardFooter>
+    </Card>
+  );
 }
 
-export default AddressCard
+export default AddressCard;
