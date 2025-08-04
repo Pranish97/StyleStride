@@ -6,7 +6,7 @@ import { Badge } from "../ui/badge";
 
 function ShoppingOrderDetailsView({ orderDetails }) {
   const { user } = useSelector((state) => state.auth);
-  console.log(orderDetails)
+
   return (
     <DialogContent className="sm:max-w-[600px]">
       <div className="grid gap-6">
@@ -40,11 +40,13 @@ function ShoppingOrderDetailsView({ orderDetails }) {
             <p className="font-medium">Order Status</p>
             <Label>
               <Badge
-                className={`py-2 px-3 ${
-                  orderDetails?.orderStatus === "confirmed"
+                className={`${
+                  orderDetails?.orderStatus === "delivered"
                     ? "bg-green-600"
+                    : orderDetails?.orderStatus === "rejected"
+                    ? "bg-red-600"
                     : "bg-black"
-                }`}
+                } px-3 py-2 `}
               >
                 {orderDetails?.orderStatus}
               </Badge>

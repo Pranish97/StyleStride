@@ -13,7 +13,7 @@ import {
 import ShoppingOrderDetailsView from "./orderDetails";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getAllOrders,
+  getAllOrdersByUser,
   getOrderDetails,
   resetOrderDetails,
 } from "../../store/shop/order-slice";
@@ -30,14 +30,12 @@ function ShoppingOrders() {
   }
 
   useEffect(() => {
-    dispatch(getAllOrders(user?.id));
+    dispatch(getAllOrdersByUser(user?.id));
   }, [dispatch]);
 
   useEffect(() => {
     if (orderDetails !== null) setOpenOrderDialog(true);
   }, [orderDetails]);
-
-  
 
   return (
     <Card>
@@ -66,11 +64,13 @@ function ShoppingOrders() {
                     <TableCell>{orderItems?.orderDate.split("T")[0]}</TableCell>
                     <TableCell>
                       <Badge
-                        className={`py-2 px-3 ${
-                          orderItems.orderStatus === "confirmed"
+                        className={`${
+                          orderItems?.orderStatus === "delivered"
                             ? "bg-green-600"
+                            : orderItems?.orderStatus === "rejected"
+                            ? "bg-red-600"
                             : "bg-black"
-                        }`}
+                        } px-3 py-2 `}
                       >
                         {orderItems.orderStatus}
                       </Badge>
