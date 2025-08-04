@@ -37,8 +37,8 @@ export const capturePayment = createAsyncThunk(
   }
 );
 
-export const getAllOrders = createAsyncThunk(
-  "/order/getAllOrders",
+export const getAllOrdersByUser = createAsyncThunk(
+  "/order/getAllOrdersByUser",
   async (userId) => {
     const response = await axios.get(
       `http://localhost:5000/api/shop/order/list/${userId}`
@@ -62,7 +62,7 @@ const shopOrderSlice = createSlice({
   name: "shopOrder",
   initialState,
   reducers: {
-    resetOrderDetails: (state, action) => {
+    resetOrderDetails: (state) => {
       state.orderDetails = null;
     },
   },
@@ -85,14 +85,14 @@ const shopOrderSlice = createSlice({
         state.approvalURL = null;
         state.orderId = null;
       })
-      .addCase(getAllOrders.pending, (state) => {
+      .addCase(getAllOrdersByUser.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getAllOrders.fulfilled, (state, action) => {
+      .addCase(getAllOrdersByUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.orderList = action.payload.data;
       })
-      .addCase(getAllOrders.rejected, (state) => {
+      .addCase(getAllOrdersByUser.rejected, (state) => {
         state.isLoading = false;
         state.orderList = [];
       })
