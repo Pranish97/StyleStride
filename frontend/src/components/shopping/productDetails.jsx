@@ -5,16 +5,32 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import { StarIcon } from "lucide-react";
 import { Input } from "../ui/input";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../../store/shop/cart-slice";
+import { addToCart, fetchCartItems } from "../../store/shop/cart-slice";
 import { toast } from "react-toastify";
 import { setProductDetails } from "../../store/shop/products-slice";
+import { useEffect } from "react";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  
+  const { cartItems } = useSelector((state) => state.shopCart);
 
-  function handleAddToCart(getCurrentProductId) {
+  console.log(cartItems, "cart");
+  function handleAddToCart(getCurrentProductId, getTotalStock) {
+    const getCartItems = cartItems?.items || [];
+   
+    const currentItem = getCartItems.find(
+      (item) => item.productId === getCurrentProductId
+    );
+
+    const currentQuantity = currentItem ? currentItem.quantity : 0;
+    const newQuantity = currentQuantity + 1;
+
+    if (newQuantity > getTotalStock) {
+      toast.error("Out of Stock");
+      return;
+    }
+    
     dispatch(
       addToCart({
         userId: user?.id,
@@ -22,17 +38,22 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         quantity: 1,
       })
     ).then((data) => {
-      console.log(data)
-      if(data?.payload?.success){
-        toast.success(data?.payload?.message)
+      console.log(data);
+      if (data?.payload?.success) {
+        toast.success(data?.payload?.message);
+        dispatch(fetchCartItems(user?.id));
       }
     });
   }
 
-  function handleDialogClose(){
-    setOpen(false)
-    dispatch(setProductDetails())
+  function handleDialogClose() {
+    setOpen(false);
+    dispatch(setProductDetails());
   }
+
+  useEffect(() => {
+    dispatch(fetchCartItems(user.id));
+  }, [dispatch]);
 
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
@@ -92,9 +113,14 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
           <div className="mt-5 mb-5">
             <Button
               className="w-full cursor-pointer"
-              onClick={() => handleAddToCart(productDetails._id)}
+              disabled={productDetails?.totalStock === 0}
+              onClick={() =>
+                handleAddToCart(productDetails._id, productDetails?.totalStock)
+              }
             >
-              Add to Cart
+              {productDetails?.totalStock === 0
+                ? "Out of Stock"
+                : "Add to Cart"}
             </Button>
           </div>
           <Separator />

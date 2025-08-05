@@ -2,17 +2,27 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import { Badge } from "../ui/badge";
 
 function ShoppingProductTile({ product, handleProductDetails }) {
-  
   return (
     <Card className="w-full max-w-sm mx-auto hover:scale-105 cursor-pointer">
-      <div onClick={()=> handleProductDetails(product._id)}>
+      <div onClick={() => handleProductDetails(product._id)}>
         <div className="relative">
           <img
             src={product?.image}
             alt={product.title}
             className="w-full h-[300px] object-cover rounded-t-lg"
           />
-          {product?.salePrice > 0 ? (
+          {product?.totalStock === 0 ? (
+            <Badge className="absolute top-2 right-2 bg-red-500 hover:bg-red-600">
+              Out Of Stock
+            </Badge>
+          ) : product?.totalStock < 10 ? (
+            <Badge className="absolute top-2 right-2 bg-yellow-500 hover:bg-yellow-600">
+              {`Onlt ${product.totalStock} Left`}
+            </Badge>
+          ) : <Badge className="absolute top-2 right-2 bg-yellow-500 hover:bg-yellow-600">
+              {`Onlt ${product.totalStock} Left`}
+            </Badge> }
+           { product?.salePrice > 0 ? (
             <Badge className="absolute top-2 left-2 bg-red-500 hover:bg-red-600">
               Sale
             </Badge>

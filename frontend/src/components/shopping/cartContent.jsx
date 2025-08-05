@@ -12,9 +12,10 @@ import { useEffect } from "react";
 function UserCartContent({ cartItem }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.shopCart);
+  const { productList } = useSelector((state) => state.shopProducts);
 
   function handleCartDelete(getCartItem) {
-    console.log(getCartItem);
     dispatch(
       deleteCartItem({ userId: user?.id, productId: getCartItem.productId })
     ).then((data) => {
@@ -25,6 +26,26 @@ function UserCartContent({ cartItem }) {
   }
 
   function handleUpdateQuantity(getCartItem, typeOfAction) {
+    console.log(getCartItem);
+    if (typeOfAction == "plus") {
+      const getCartItems = cartItems?.items || [];
+
+      const currentItem = getCartItems.find(
+        (item) => item.productId === getCartItem?.productId
+      );
+
+      const getCurrentProductIndex = productList.findIndex(
+        (product) => product._id === getCartItem?.productId
+      );
+      const getTotalStock = productList[getCurrentProductIndex]?.totalStock;
+      const currentQuantity = currentItem ? currentItem.quantity : 0;
+      const newQuantity = currentQuantity + 1;
+
+      if (newQuantity > getTotalStock) {
+        toast.error("Out of Stock");
+        return;
+      }
+    }
     dispatch(
       updateCart({
         userId: user?.id,

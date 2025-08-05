@@ -43,6 +43,9 @@ function ShoppingListing() {
   const [sort, setSort] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
+
+  const categorySearchParam = searchParams.get('category')
+
   function handleSort(value) {
     setSort(value);
   }
@@ -76,7 +79,7 @@ function ShoppingListing() {
   useEffect(() => {
     setSort("price-lowtohigh");
     setFilter(JSON.parse(sessionStorage.getItem("filters")) || {});
-  }, []);
+  }, [categorySearchParam]);
 
   useEffect(() => {
     if (filter && Object.keys(filter).length > 0) {
@@ -96,6 +99,7 @@ function ShoppingListing() {
     if (productDetails !== null) setOpen(true);
   }, [productDetails]);
 
+  console.log(productList ,'productList')
   return (
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
       <ProductFilter filter={filter} handleFilter={handleFilter} />
