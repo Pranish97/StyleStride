@@ -4,11 +4,13 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const authRouter = require("./routes/auth/auth-routes");
 const adminProductsRouter = require("./routes/admin/productsRoutes");
+const adminOrderRouter = require("./routes/admin/orderRoutes");
+
 const shopProductsRouter = require("./routes/shop/shopRoutes");
 const shopCartRouter = require("./routes/shop/cartRoutes");
 const shopAddressRouter = require("./routes/shop/addressRoutes");
 const shopOrderRouter = require("./routes/shop/orderRoutes");
-const adminOrderRouter = require("./routes/admin/orderRoutes");
+const shopSearchRouter = require("./routes/shop/searchRoutes");
 
 mongoose
   .connect(
@@ -45,5 +47,6 @@ app.use("/api/shop/products", shopProductsRouter);
 app.use("/api/shop/cart", shopCartRouter);
 app.use("/api/shop/address", shopAddressRouter);
 app.use("/api/shop/order", shopOrderRouter);
+app.use("/api/shop/search", shopSearchRouter);
 
 app.listen(PORT, () => console.log("Server is now running"));
