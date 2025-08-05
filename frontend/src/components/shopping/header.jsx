@@ -1,6 +1,6 @@
 import logo from "../../assets/logo.png";
-import { Link, useNavigate } from "react-router-dom";
-import {  Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { DropdownMenu } from "../ui/dropdown-menu";
@@ -20,22 +20,26 @@ import UserCartWrapper from "./cartWrapper";
 import { useEffect, useState } from "react";
 import { fetchCartItems } from "../../store/shop/cart-slice";
 
-
-
 function MenuItems() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
 
+  function handleNavigate(getCurrentMenuItem) {
+    sessionStorage.removeItem("filters");
 
-  function handleNavigate(getCurrentMenuItem){
-    sessionStorage.removeItem('filters')
+    const currentFilter =
+      getCurrentMenuItem.id !== "home" && getCurrentMenuItem.id !== "products"
+        ? {
+            category: [getCurrentMenuItem.id],
+          }
+        : null;
 
-    const currentFilter = getCurrentMenuItem.id !== 'home' ? {
-      category: [getCurrentMenuItem.id]
-    } : null
-
-    sessionStorage.setItem('filters', JSON.stringify(currentFilter))
-    navigate(getCurrentMenuItem.path)
+    sessionStorage.setItem("filters", JSON.stringify(currentFilter));
     
+    location.pathname.includes('listing') && currentFilter !== null ?
+    setSearchParams(new URLSearchParams(`?category=${getCurrentMenuItem.id}`)) :
+    navigate(getCurrentMenuItem.path);
   }
 
   return (
@@ -58,8 +62,7 @@ function HeaderRightContent() {
   const [openCartSheet, setOpenCartSheet] = useState(false);
   const dispatch = useDispatch();
   const { cartItems } = useSelector((state) => state.shopCart);
-  const navigate = useNavigate()
-
+  const navigate = useNavigate();
 
   function handleLogout() {
     dispatch(logoutUser()).then((data) => {
@@ -70,9 +73,8 @@ function HeaderRightContent() {
   }
 
   useEffect(() => {
-    dispatch(fetchCartItems(user?.id))
-  },[dispatch])
-
+    dispatch(fetchCartItems(user?.id));
+  }, [dispatch]);
 
   return (
     <div className="flex lg:ml-0 lg:mt-0 lg:items-center lg:flex-row flex-col gap-4 ml-8 mt-4">
@@ -86,7 +88,14 @@ function HeaderRightContent() {
           <span className="sr-only">User Cart</span>
         </Button>
 
-        <UserCartWrapper setOpenCartSheet={setOpenCartSheet} cartItems={cartItems && cartItems.items && cartItems.items.length > 0  ? cartItems.items : ""} />
+        <UserCartWrapper
+          setOpenCartSheet={setOpenCartSheet}
+          cartItems={
+            cartItems && cartItems.items && cartItems.items.length > 0
+              ? cartItems.items
+              : ""
+          }
+        />
       </Sheet>
 
       <DropdownMenu>
