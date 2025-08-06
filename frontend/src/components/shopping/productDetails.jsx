@@ -4,21 +4,30 @@ import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { StarIcon } from "lucide-react";
 import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, fetchCartItems } from "../../store/shop/cart-slice";
 import { toast } from "react-toastify";
 import { setProductDetails } from "../../store/shop/products-slice";
 import { useEffect } from "react";
+import StarRating from "../common/star-rating";
+import { useState } from "react";
+import { addProductReview } from "../../store/shop/review-slice";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
+  const [reviewMessage, setReviewMessage] = useState("");
+  const [rating, setRating] = useState(0);
 
-  console.log(cartItems, "cart");
+  function handleRatingChange(getRating) {
+    setRating(getRating);
+  }
+
   function handleAddToCart(getCurrentProductId, getTotalStock) {
     const getCartItems = cartItems?.items || [];
-   
+
     const currentItem = getCartItems.find(
       (item) => item.productId === getCurrentProductId
     );
@@ -30,7 +39,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
       toast.error("Out of Stock");
       return;
     }
-    
+
     dispatch(
       addToCart({
         userId: user?.id,
@@ -38,7 +47,6 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         quantity: 1,
       })
     ).then((data) => {
-      console.log(data);
       if (data?.payload?.success) {
         toast.success(data?.payload?.message);
         dispatch(fetchCartItems(user?.id));
@@ -49,6 +57,28 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   function handleDialogClose() {
     setOpen(false);
     dispatch(setProductDetails());
+    setReviewMessage("")
+    setRating(0)
+  }
+  console.log(user)
+
+  function handleAddReview() {
+    dispatch(
+      addProductReview({
+        productId: productDetails?._id,
+        userId: user?.id,
+        userName: user?.name,
+        reviewMessage: reviewMessage,
+        reviewValue: rating,
+      })
+    ).then((data) => {
+      console.log(data)
+      if (data?.payload?.success) {
+        toast.success(data.payload?.message);
+      }else{
+        toast.error(data.payload?.message)
+      }
+    });
   }
 
   useEffect(() => {
@@ -169,9 +199,27 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
               </div>
             </div>
 
-            <div className="mt-6 flex gap-2">
-              <Input placeholder="Write a Review..." />
-              <Button className="cursor-pointer">Submit</Button>
+            <div className="mt-10 flex flex-col gap-2">
+              <Label>Write a Review</Label>
+              <div className="flex">
+                <StarRating
+                  rating={rating}
+                  handleRatingChange={handleRatingChange}
+                />
+              </div>
+              <Input
+                name="reviewMessage"
+                value={reviewMessage}
+                onChange={(e) => setReviewMessage(e.target.value)}
+                placeholder="Write a Review..."
+              />
+              <Button
+                onClick={handleAddReview}
+                disabled={reviewMessage.trim() === ""}
+                className="cursor-pointer"
+              >
+                Submit
+              </Button>
             </div>
           </div>
         </div>
