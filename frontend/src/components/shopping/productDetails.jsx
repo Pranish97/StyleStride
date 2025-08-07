@@ -12,12 +12,16 @@ import { setProductDetails } from "../../store/shop/products-slice";
 import { useEffect } from "react";
 import StarRating from "../common/star-rating";
 import { useState } from "react";
-import { addProductReview } from "../../store/shop/review-slice";
+import {
+  addProductReview,
+  getProductReview,
+} from "../../store/shop/review-slice";
 
 function ProductDetailsDialog({ open, setOpen, productDetails }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
+  const { reviewData } = useSelector((state) => state.shopReview);
   const [reviewMessage, setReviewMessage] = useState("");
   const [rating, setRating] = useState(0);
 
@@ -57,10 +61,9 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   function handleDialogClose() {
     setOpen(false);
     dispatch(setProductDetails());
-    setReviewMessage("")
-    setRating(0)
+    setReviewMessage("");
+    setRating(0);
   }
-  console.log(user)
 
   function handleAddReview() {
     dispatch(
@@ -72,11 +75,13 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         reviewValue: rating,
       })
     ).then((data) => {
-      console.log(data)
       if (data?.payload?.success) {
+        setReviewMessage("")
+        setRating(0);
+        dispatch(getProductReview(productDetails?._id));
         toast.success(data.payload?.message);
-      }else{
-        toast.error(data.payload?.message)
+      } else {
+        toast.error(data.payload?.message);
       }
     });
   }
@@ -84,6 +89,19 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
   useEffect(() => {
     dispatch(fetchCartItems(user.id));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (productDetails !== null)
+      dispatch(getProductReview(productDetails?._id));
+  }, [productDetails]);
+
+  console.log(reviewData);
+
+   const averageReview = reviewData && reviewData.length > 0 ?
+      reviewData.reduce((sum, reviewItem) => sum + reviewItem.reviewValue, 0) /
+      reviewData.length : 0;
+
+      console.log(averageReview)
 
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
@@ -105,13 +123,9 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
             </h1>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-0.5">
-                <StarIcon className="w-4 h-4 fill-amber-500 stroke-amber-500" />
-                <StarIcon className="w-4 h-4 fill-amber-500 stroke-amber-500 " />
-                <StarIcon className="w-4 h-4  fill-amber-500 stroke-amber-500" />
-                <StarIcon className="w-4 h-4  fill-amber-500 stroke-amber-500" />
-                <StarIcon className="w-4 h-4  fill-amber-500 stroke-amber-500" />
+                <StarRating rating={averageReview}/>
               </div>
-              <span className="text-muted-foreground">(4.5)</span>
+              <span className="text-muted-foreground">({averageReview.toFixed(2)})</span>
             </div>
             <div className="flex justify-between mb-2 mt-3">
               <p className="capitalize text-base lg:text-xl font-bold text-foreground">
@@ -157,46 +171,30 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
           <div className="max-h-[300px] overflow-auto">
             <h2 className="text-xl font-bold mb-4">Reviews</h2>
             <div className="grid gap-6">
-              <div className="flex gap-4">
-                <Avatar className="bg-black w-10 h-10 border">
-                  <AvatarFallback>SM</AvatarFallback>
-                </Avatar>
-                <div className="grid gap-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-bold">Pranish Shrestha</h3>
+              {reviewData && reviewData.length > 0 ? (
+                reviewData.map((reviewItem) => (
+                  <div className="flex gap-4">
+                    <Avatar className="bg-black w-10 h-10 border">
+                      <AvatarFallback>
+                        {reviewItem?.userName[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid gap-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="capitalize font-bold">{reviewItem?.userName}</h3>
+                      </div>
+                      <div className="flex items-center gap-0.5">
+                        <StarRating rating={reviewItem?.reviewValue} />
+                      </div>
+                      <p className="text-muted-foreground">
+                        {reviewItem?.reviewMessage}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-0.5">
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4  fill-primary" />
-                    <StarIcon className="w-4 h-4  fill-primary" />
-                    <StarIcon className="w-4 h-4  fill-primary" />
-                  </div>
-                  <p className="text-muted-foreground">
-                    The best comfortable shoes.
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <Avatar className="bg-black w-10 h-10 border">
-                  <AvatarFallback>SM</AvatarFallback>
-                </Avatar>
-                <div className="grid gap-1">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-bold">Pranish Shrestha</h3>
-                  </div>
-                  <div className="flex items-center gap-0.5">
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4 fill-primary" />
-                    <StarIcon className="w-4 h-4  fill-primary" />
-                    <StarIcon className="w-4 h-4  fill-primary" />
-                    <StarIcon className="w-4 h-4  fill-primary" />
-                  </div>
-                  <p className="text-muted-foreground">
-                    The best comfortable shoes.
-                  </p>
-                </div>
-              </div>
+                ))
+              ) : (
+                <h1>No Review</h1>
+              )}
             </div>
 
             <div className="mt-10 flex flex-col gap-2">
