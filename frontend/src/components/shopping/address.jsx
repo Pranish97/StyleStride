@@ -20,7 +20,7 @@ const initialData = {
   notes: "",
 };
 
-function Address({setCurrentSelectedAddress}) {
+function Address({ setCurrentSelectedAddress, selectedId }) {
   const [formData, setFormData] = useState(initialData);
   const [currentEditedId, setCurrentEditedId] = useState(null);
   const dispatch = useDispatch();
@@ -30,11 +30,11 @@ function Address({setCurrentSelectedAddress}) {
   function handleManageAddress(e) {
     e.preventDefault();
 
-    if(addressList.length >= 3 && currentEditedId === null) {
-      setFormData(initialData)
-      toast.error("You can only add 3 Address")
+    if (addressList.length >= 3 && currentEditedId === null) {
+      setFormData(initialData);
+      toast.error("You can only add 3 Address");
 
-      return
+      return;
     }
 
     currentEditedId !== null
@@ -82,7 +82,7 @@ function Address({setCurrentSelectedAddress}) {
 
   function handleEdit(getCurrentAddress) {
     setCurrentEditedId(getCurrentAddress?._id);
-    console.log(getCurrentAddress)
+    console.log(getCurrentAddress);
     setFormData({
       ...formData,
       address: getCurrentAddress?.address,
@@ -109,6 +109,7 @@ function Address({setCurrentSelectedAddress}) {
         {addressList && addressList.length > 0
           ? addressList.map((address) => (
               <AddressCard
+                selectedId={selectedId}
                 addressInfo={address}
                 handleDelete={handleDelete}
                 handleEdit={handleEdit}

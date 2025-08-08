@@ -1,7 +1,17 @@
+import { useNavigate } from "react-router-dom";
+import { Button } from "../../components/ui/button";
+import { Card, CardHeader, CardTitle } from "../../components/ui/card";
+
 function PaymentSuccessPage() {
-    return(
-        <div>Payment Successfull</div>
-    )
+    const navigate =useNavigate()
+  return (
+    <Card className="p-10">
+      <CardHeader className="p-0">
+        <CardTitle className="text-4xl">Payement Successfull!</CardTitle>
+      </CardHeader>
+      <Button className="mt-3 w-40 h-10" onClick={() => navigate('/shop/account')}>View Orders</Button>
+    </Card>
+  );
 }
 
-export default PaymentSuccessPage
+export default PaymentSuccessPage;

@@ -83,8 +83,10 @@ function HeaderRightContent() {
           variant="outline"
           size="icon"
           onClick={() => setOpenCartSheet(true)}
+          className="relative"
         >
           <ShoppingCart className="h-6 w-6" />
+          <span className="absolute top-[-4px] right-[2px] text-sm font-bold text-red-600">{cartItems?.items?.length || 0}</span>
           <span className="sr-only">User Cart</span>
         </Button>
 
@@ -131,7 +133,6 @@ function HeaderRightContent() {
 
 function ShoppingHeader() {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-  console.log(user);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">

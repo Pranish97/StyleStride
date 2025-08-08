@@ -13,6 +13,8 @@ const shopOrderRouter = require("./routes/shop/orderRoutes");
 const shopSearchRouter = require("./routes/shop/searchRoutes");
 const shopReviewRouter = require("./routes/shop/reviewRoutes");
 
+const commonFeatureRouter = require("./routes/common/featuresRoutes");
+
 mongoose
   .connect(
     "mongodb+srv://pranishstha4:Pranish123@stylestride.co3hgwh.mongodb.net/StyleStride?retryWrites=true&w=majority&appName=StyleStride"
@@ -50,5 +52,7 @@ app.use("/api/shop/address", shopAddressRouter);
 app.use("/api/shop/order", shopOrderRouter);
 app.use("/api/shop/search", shopSearchRouter);
 app.use("/api/shop/review", shopReviewRouter);
+
+app.use("/api/common/features", commonFeatureRouter);
 
 app.listen(PORT, () => console.log("Server is now running"));

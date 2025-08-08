@@ -14,7 +14,8 @@ function ProductImageUpload({
   setUploadedImageUrl,
   setImageLoadingState,
   imageLoadingState,
-  currentEditedId
+  currentEditedId,
+  isCostomStyling = false,
 }) {
   const inputRef = useRef(null);
 
@@ -59,16 +60,19 @@ function ProductImageUpload({
     if (imageFile !== null) uploadImageToCloudinary();
   }, [imageFile]);
 
+
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className={`w-full mt-4 ${isCostomStyling ? "" : "max-w-md mx-auto"}`}>
       <Label className="text-lg font-semibold mb-2 block mt-4">
         Upload Image
       </Label>
-      
+
       <div
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        className={`${currentEditedId ? "opacity-30" : ""} border-2 border-dashed rounded-lg p-4`}
+        className={`${
+          currentEditedId ? "opacity-30" : ""
+        } border-2 border-dashed rounded-lg p-4`}
       >
         <Input
           onChange={handleImageFileChange}

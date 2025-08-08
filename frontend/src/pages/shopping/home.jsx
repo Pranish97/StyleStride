@@ -1,6 +1,3 @@
-import bannerOne from "../../assets/banner-1.webp";
-import bannerTwo from "../../assets/banner-2.webp";
-import bannerThree from "../../assets/banner-3.webp";
 import { Button } from "../../components/ui/button";
 import {
   BabyIcon,
@@ -27,6 +24,7 @@ import  levis  from "../../assets/levis.png";
 import  zara  from "../../assets/zara.png";
 import hm  from "../../assets/hm.jpg";
 import {useNavigate} from "react-router-dom"
+import { getFeatureImage } from "../../store/common";
 
 const categories = [
   { id: "men", label: "Men", icon: ShirtIcon },
@@ -48,16 +46,16 @@ const brand = [
 function ShoppingHome() {
   const [open, setOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const slides = [bannerOne, bannerTwo, bannerThree];
   const { productList, productDetails } = useSelector(
     (state) => state.shopProducts
   );
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const {featureImageList} = useSelector(state => state.commonFeature)
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setCurrentSlide((prev) => (prev + 1) % featureImageList?.length);
     }, 5000);
 
     return () => clearInterval(timer);
@@ -93,12 +91,16 @@ function ShoppingHome() {
     if (productDetails !== null) setOpen(true);
   }, [productDetails]);
 
+  useEffect(() =>{
+    dispatch(getFeatureImage())
+  },[dispatch])
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="relative w-full h-[600px] overflow-hidden">
-        {slides.map((slide, index) => (
+        {featureImageList.map((featureItem, index) => (
           <img
-            src={slide}
+            src={featureItem?.image}
             key={index}
             className={` ${
               index === currentSlide ? "opactity-100 " : "opactiy-0"
@@ -110,7 +112,7 @@ function ShoppingHome() {
           size="icon"
           onClick={() =>
             setCurrentSlide(
-              (prev) => (prev - 1 + slides.length) % slides.length
+              (prev) => (prev - 1 + featureImageList.length) % featureImageList.length
             )
           }
           className="absolute cursor-pointer top-1/2 left-4 transform -translate-y-1/2 bg-white/80"
@@ -121,7 +123,7 @@ function ShoppingHome() {
         <Button
           variant="outline"
           size="icon"
-          onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
+          onClick={() => setCurrentSlide((prev) => (prev + 1) % featureImageList?.length)}
           className="absolute cursor-pointer top-1/2 right-4 transform -translate-y-1/2 bg-white/80"
         >
           <ChevronRightIcon className="w-4 h-4" />
