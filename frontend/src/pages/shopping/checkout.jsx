@@ -68,7 +68,6 @@ function ShoppingCheckout() {
     };
 
     dispatch(createNewOrder(orderData)).then((data) => {
-      console.log(data);
       if (data?.payload?.success) {
         setIsPayementStart(true);
       } else {
@@ -88,7 +87,10 @@ function ShoppingCheckout() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5 p-5">
-        <Address setCurrentSelectedAddress={setCurrentSelectedAddress} />
+        <Address
+          selectedId={currentSelectedAddress}
+          setCurrentSelectedAddress={setCurrentSelectedAddress}
+        />
 
         <div className="flex flex-col gap-4 mt-16">
           {cartItems?.items?.length > 0
@@ -105,8 +107,10 @@ function ShoppingCheckout() {
           </div>
 
           <div className="mt-4 w-full">
-            <Button onClick={handleInitiatePaypalPayement} className="w-full">
-              Checkout with Paypal
+            <Button disabled={isPayementStart} onClick={handleInitiatePaypalPayement} className="w-full">
+              {
+                isPayementStart ? "Processing Paypal Payement..." : "Checkout With paypal"
+            }
             </Button>
           </div>
         </div>

@@ -95,13 +95,10 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
       dispatch(getProductReview(productDetails?._id));
   }, [productDetails]);
 
-  console.log(reviewData);
 
    const averageReview = reviewData && reviewData.length > 0 ?
       reviewData.reduce((sum, reviewItem) => sum + reviewItem.reviewValue, 0) /
       reviewData.length : 0;
-
-      console.log(averageReview)
 
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>

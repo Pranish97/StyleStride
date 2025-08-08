@@ -7,12 +7,14 @@ function AddressCard({
   handleDelete,
   handleEdit,
   setCurrentSelectedAddress,
+  selectedId,
 }) {
   return (
     <Card
-      onClick={
-         () => setCurrentSelectedAddress(addressInfo)
-      }
+      onClick={() => setCurrentSelectedAddress(addressInfo)}
+      className={` ${
+        selectedId?._id === addressInfo._id ? "border-black bg-blue-500" : ""
+      } cursor-pointer `}
     >
       <CardContent className="grid p-4 gap-4">
         <Label>Address: {addressInfo.address}</Label>
@@ -21,8 +23,7 @@ function AddressCard({
         <Label>Phone: {addressInfo.phone}</Label>
         <Label>Notes: {addressInfo.notes}</Label>
       </CardContent>
-
-      <CardFooter className="p-0 flex gap-3">
+      <CardFooter className="p-0 flex gap-3 mx-auto">
         <Button onClick={() => handleEdit(addressInfo)}>Edit</Button>
         <Button onClick={() => handleDelete(addressInfo)}>Delete</Button>
       </CardFooter>
